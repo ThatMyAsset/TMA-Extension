@@ -4,31 +4,87 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="color-scheme" content="light">
-  <title>ThatMyAssets status</title>
+  <meta name="theme-color" content="#f4f5f2">
+  <title>ThatMyAssets · Browser protection</title>
   <link rel="stylesheet" href="popup.css">
 </head>
 <body>
   <main>
-    <header>
-      <span class="mark" aria-hidden="true">T</span>
-      <div><p class="eyebrow">THATMYASSETS</p><h1>Browser DLP</h1></div>
+    <header class="brand">
+      <svg class="brand-mark" viewBox="0 0 40 40" aria-hidden="true">
+        <path d="M20 3 34 8v10c0 9-5.8 15.8-14 19C11.8 33.8 6 27 6 18V8Z" fill="currentColor"/>
+        <path d="m12.5 20 5 5 10-11" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+      <div><p class="eyebrow">THATMYASSETS</p><h1>Browser protection</h1></div>
+      <span class="local-badge">Local only</span>
     </header>
-    <section class="status" aria-labelledby="state">
-      <div class="state-line"><span id="dot" class="dot" aria-hidden="true"></span><h2 id="state">Checking endpoint</h2></div>
-      <p id="detail" role="status" aria-live="polite">Contacting the native agent…</p>
+
+    <nav class="tabs" role="tablist" aria-label="Protection details">
+      <button id="status-tab" class="tab" type="button" role="tab" aria-selected="true" aria-controls="status-panel">
+        <svg viewBox="0 0 20 20" aria-hidden="true"><path d="M10 2 17 5v5c0 4.4-2.8 7.2-7 8-4.2-.8-7-3.6-7-8V5Z"/><path d="m6.5 10 2.2 2.2 4.8-5"/></svg>
+        Status
+      </button>
+      <button id="coverage-tab" class="tab" type="button" role="tab" aria-selected="false" aria-controls="coverage-panel" tabindex="-1">
+        <svg viewBox="0 0 20 20" aria-hidden="true"><circle cx="10" cy="10" r="7"/><path d="M3 10h14M10 3c2.3 2.4 2.3 11.6 0 14M10 3c-2.3 2.4-2.3 11.6 0 14"/></svg>
+        Coverage
+      </button>
+    </nav>
+
+    <section id="status-panel" role="tabpanel" aria-labelledby="status-tab" tabindex="0">
+      <section id="status-card" class="status-card" data-state="pending" aria-labelledby="state">
+        <div class="state-heading">
+          <span class="state-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24"><path d="M12 2 20 5.5V11c0 5.1-3.2 9-8 11-4.8-2-8-5.9-8-11V5.5Z"/><path class="state-check" d="m8 12 2.6 2.6L16.5 9"/></svg>
+          </span>
+          <div><p class="section-kicker">PROTECTION STATE</p><h2 id="state">Checking protection</h2></div>
+        </div>
+        <p id="detail" class="status-detail">Contacting the native agent…</p>
+        <div class="local-note">
+          <svg viewBox="0 0 20 20" aria-hidden="true"><rect x="3" y="3" width="14" height="11" rx="2"/><path d="M7 17h6M10 14v3M7 8l2 2 4-4"/></svg>
+          <p><strong>Inspection stays on this device.</strong> Prompt and text-file content goes only to your local agent—not to the Control Plane.</p>
+        </div>
+      </section>
+
+      <section class="endpoint" aria-labelledby="endpoint-title">
+        <div class="section-heading"><h2 id="endpoint-title">Native endpoint</h2><span id="agent-status" class="status-pill">Checking</span></div>
+        <dl class="facts">
+          <div><dt>Agent version</dt><dd id="version">—</dd></div>
+          <div><dt>Policy version</dt><dd id="policy">—</dd></div>
+          <div><dt>Last checked</dt><dd id="checked">—</dd></div>
+        </dl>
+      </section>
+
+      <section class="route-card" aria-labelledby="route-title">
+        <div class="route-icon" aria-hidden="true"><svg viewBox="0 0 20 20"><circle cx="10" cy="10" r="7"/><path d="M3 10h14M10 3c2.3 2.4 2.3 11.6 0 14M10 3c-2.3 2.4-2.3 11.6 0 14"/></svg></div>
+        <div><h2 id="route-title">Current provider</h2><p id="route">Checking active tab…</p></div>
+        <a id="provider-link" class="icon-link" href="#" target="_blank" rel="noreferrer" aria-label="Open provider in a new tab" hidden>
+          <svg viewBox="0 0 20 20" aria-hidden="true"><path d="M11 3h6v6M17 3l-8 8M15 11v5a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V6a1 1 0 0 1 1-1h5"/></svg>
+        </a>
+      </section>
     </section>
-    <dl class="facts">
-      <div><dt>Current route</dt><dd id="route">Checking…</dd></div>
-      <div><dt>Agent</dt><dd id="version">—</dd></div>
-      <div><dt>Policy</dt><dd id="policy">—</dd></div>
-      <div><dt>Last checked</dt><dd id="checked">—</dd></div>
-    </dl>
-    <section class="coverage" aria-labelledby="coverage-title">
-      <h2 id="coverage-title">Actual coverage</h2>
-      <ul><li>Supported prompt editors and submit events</li><li>UTF-8 text file input, drop, and paste</li><li>Selected provider JSON request APIs</li></ul>
-      <p id="route-limit">Desktop applications, browser updates with unrecognized controls, streaming requests, and unsupported file formats are not protected. Unknown uploads on supported routes fail closed.</p>
+
+    <section id="coverage-panel" role="tabpanel" aria-labelledby="coverage-tab" tabindex="0" hidden>
+      <div class="coverage-intro"><p class="section-kicker">SUPPORTED ROUTES</p><h2>Protection where controls are recognized.</h2><p>Provider pages are matched by host and path. Current-page coverage also requires detected prompt controls.</p></div>
+      <ul id="provider-list" class="provider-list" aria-label="Supported AI providers"></ul>
+      <section class="scope" aria-labelledby="scope-title">
+        <h2 id="scope-title">What gets inspected</h2>
+        <ul class="scope-list">
+          <li><svg viewBox="0 0 20 20" aria-hidden="true"><path d="m4 10 4 4 8-8"/></svg>Prompt submissions and recognized request APIs</li>
+          <li><svg viewBox="0 0 20 20" aria-hidden="true"><path d="m4 10 4 4 8-8"/></svg>UTF-8 text files selected, dropped, or pasted</li>
+          <li class="limit"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M5 5l10 10M15 5 5 15"/></svg>Desktop apps, unrecognized controls, streaming, and unsupported files</li>
+        </ul>
+      </section>
+      <p class="scope-note">Unknown uploads on supported routes fail closed. Gemini and Copilot have editor/file interception but no configured request API interception.</p>
     </section>
-    <button id="refresh" type="button">Check connection</button>
+
+    <footer>
+      <button id="refresh" class="refresh" type="button">
+        <svg viewBox="0 0 20 20" aria-hidden="true"><path d="M16 7a6.5 6.5 0 1 0 .2 5M16 3v4h-4"/></svg>
+        <span>Refresh status</span>
+      </button>
+      <p>Native agent · Native Messaging</p>
+    </footer>
+    <p id="announcement" class="sr-only" role="status" aria-live="polite" aria-atomic="true"></p>
   </main>
   <script type="module" src="popup.js"></script>
 </body>

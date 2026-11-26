@@ -30,7 +30,7 @@ npm test
 npm run package
 ```
 
-Unit tests cover provider host/path matching, supported JSON prompt extraction, malformed request payloads, complete/incomplete decision behavior, fail-closed enforcement, acknowledgement semantics, and native response consistency. Final verification should also exercise a live endpoint on every managed provider UI; DOM selectors and network API formats can change independently of this extension.
+Unit tests cover provider host/path matching, supported JSON prompt extraction, malformed request payloads, complete/incomplete decision behavior, fail-closed enforcement, acknowledgement semantics, native response consistency, and popup protection-state derivation. Final verification should also exercise a live endpoint on every managed provider UI; DOM selectors and network API formats can change independently of this extension.
 
 ## Enforcement behavior
 
@@ -39,7 +39,7 @@ Unit tests cover provider host/path matching, supported JSON prompt extraction, 
 - File chooser `change`, prompt-region `drop`, and prompt-region `paste` are intercepted. Accepted events are replayed once to the provider. Providers that reject synthetic replay are reported as failed rather than marked as released.
 - Main-world `fetch` and `XMLHttpRequest` hooks cover the explicitly configured ChatGPT, Claude, Perplexity, and Grok JSON prompt endpoints. Unrecognized payloads on those endpoints fail closed.
 - Native responses are schema-checked, including agreement between `inspection_status` and `inspection_complete`. Health older than 60 seconds is shown as unavailable.
-- The popup distinguishes native health from detected page controls. Zero detected editors is shown as limited protection, not full protection.
+- The popup has Status and Coverage tabs with native agent status/version/policy, supported provider routes, detected prompt controls, and a local-only inspection explanation. Protection states distinguish protected, limited, degraded, enrollment pending, unavailable, and refresh-in-progress; no coverage is inferred on unsupported pages.
 
 ## Current limits
 
