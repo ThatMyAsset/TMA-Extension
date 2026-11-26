@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light">
+  <title>ThatMyAssets status</title>
+  <link rel="stylesheet" href="popup.css">
+</head>
+<body>
+  <main>
+    <header>
+      <span class="mark" aria-hidden="true">T</span>
+      <div><p class="eyebrow">THATMYASSETS</p><h1>Browser DLP</h1></div>
+    </header>
+    <section class="status" aria-labelledby="state">
+      <div class="state-line"><span id="dot" class="dot" aria-hidden="true"></span><h2 id="state">Checking endpoint</h2></div>
+      <p id="detail" role="status" aria-live="polite">Contacting the native agent…</p>
+    </section>
+    <dl class="facts">
+      <div><dt>Current route</dt><dd id="route">Checking…</dd></div>
+      <div><dt>Agent</dt><dd id="version">—</dd></div>
+      <div><dt>Policy</dt><dd id="policy">—</dd></div>
+      <div><dt>Last checked</dt><dd id="checked">—</dd></div>
+    </dl>
+    <section class="coverage" aria-labelledby="coverage-title">
+      <h2 id="coverage-title">Actual coverage</h2>
+      <ul><li>Supported prompt editors and submit events</li><li>UTF-8 text file input, drop, and paste</li><li>Selected provider JSON request APIs</li></ul>
+      <p id="route-limit">Desktop applications, browser updates with unrecognized controls, streaming requests, and unsupported file formats are not protected. Unknown uploads on supported routes fail closed.</p>
+    </section>
+    <button id="refresh" type="button">Check connection</button>
+  </main>
+  <script type="module" src="popup.js"></script>
+</body>
+</html>

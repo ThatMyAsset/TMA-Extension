@@ -1,0 +1,11 @@
+{
+  "type": "object",
+  "properties": {
+    "enforcementEnabled": {
+      "title": "Enable supported-route enforcement",
+      "description": "Optional enterprise override. When omitted, enforcement is enabled. Disabling is reported as unprotected.",
+      "type": "boolean"
+    }
+  },
+  "additionalProperties": false
+}
