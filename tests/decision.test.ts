@@ -36,5 +36,5 @@ test("protocol validators reject semantic inconsistencies", () => {
   assert.equal(isInspection(base, "r"), true);
   assert.equal(isInspection({ ...base, inspection_complete: false }, "r"), false);
   assert.equal(isInspection({ ...base, risk_score: 101 }, "r"), false);
-  assert.equal(isHealth({ type: "health", request_id: "h", status: "protected", agent_version: "1", policy_version: "p" }, "h"), true);
+  assert.equal(isHealth({ type: "health", request_id: "h", status: "protected", agent_version: "1", policy_version: "p", connection: { enrolled: true, device_id: "device", control_plane_configured: true, control_plane_state: "connected", last_heartbeat: "2026-11-27T12:00:00Z", last_policy_sync: "2026-11-27T12:00:00Z" } }, "h"), true);
 });
