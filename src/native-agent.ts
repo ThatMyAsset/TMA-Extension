@@ -43,7 +43,9 @@ export class NativeAgent {
           agentVersion: response.agent_version,
           policyVersion: response.policy_version,
           checkedAt: new Date().toISOString(),
-          detail: response.connection.last_sync_error
+          detail: response.connection.control_plane_state === "revoked"
+            ? "This endpoint was revoked by an administrator. The previous policy is disabled and uploads remain blocked until it is enrolled again."
+            : response.connection.last_sync_error
             ? `Control Plane sync failed: ${response.connection.last_sync_error}`
             : response.connection.control_plane_state !== "connected"
               ? `Control Plane is ${response.connection.control_plane_state.replaceAll("_", " ")}; this endpoint may not appear on the Dashboard.`

@@ -1,6 +1,6 @@
 {
   "name": "thatmyassets-extension",
-  "version": "0.1.3",
+  "version": "0.1.4",
   "private": true,
   "type": "module",
   "description": "Managed browser prompt and text-file data-loss prevention for Chromium and Firefox.",
@@ -19,3 +19,5 @@
     "node": ">=22.0.0"
   }
 }
+
+
