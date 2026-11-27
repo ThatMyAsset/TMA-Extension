@@ -28,9 +28,7 @@ export class NativeAgent {
 
   async currentHealth(): Promise<ProviderHealth> {
     await this.ready;
-    if (!this.health.checkedAt || !Number.isFinite(Date.parse(this.health.checkedAt)) || Date.now() - Date.parse(this.health.checkedAt) > 60_000) {
-      return { ...UNAVAILABLE, detail: this.health.checkedAt ? "Agent health is stale; checking the native connection." : UNAVAILABLE.detail };
-    }
+    if (!this.health.checkedAt || !Number.isFinite(Date.parse(this.health.checkedAt)) || Date.now() - Date.parse(this.health.checkedAt) > 10_000) return this.checkHealth();
     return this.health;
   }
 
@@ -38,7 +36,7 @@ export class NativeAgent {
     return this.serialize(async () => {
       try {
         const id = crypto.randomUUID();
-        const response = await this.request<HealthResponse>({ type: "health", request_id: id }, (value) => isHealth(value, id));
+        const response = await this.request<HealthResponse>({ type: "health", request_id: id, browser: true }, (value) => isHealth(value, id));
         return this.saveHealth({
           state: response.status === "protected" ? "protected" : "limited",
           agentStatus: response.status,
@@ -70,7 +68,7 @@ export class NativeAgent {
     return result;
   }
 
-  private async request<T>(body: { request_id: string; type: string }, matches: (value: unknown) => boolean): Promise<T> {
+  private async request<T>(body: { request_id: string; type: string; browser?: boolean }, matches: (value: unknown) => boolean): Promise<T> {
     const id = body.request_id;
     const port = this.connect();
     const { promise, resolve, reject } = Promise.withResolvers<T>();
