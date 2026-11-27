@@ -8,12 +8,15 @@ const root = resolve(fileURLToPath(new URL("../", import.meta.url)));
 const dist = resolve(root, "dist");
 const release = resolve(root, "release");
 await mkdir(release, { recursive: true });
-const manifest = JSON.parse(await readFile(resolve(dist, "manifest.json"), "utf8"));
-const zip = resolve(release, `thatmyassets-extension-${manifest.version}.zip`);
-const files = (await readdir(dist)).sort();
-const payload = createHash("sha256");
-for (const file of files) payload.update(file).update(await readFile(resolve(dist, file)));
-const digest = payload.digest("hex");
-execFileSync("tar", ["-a", "-cf", zip, "-C", dist, ...files], { stdio: "inherit" });
-await writeFile(resolve(release, `thatmyassets-extension-${manifest.version}.sha256`), `${digest}  thatmyassets-extension-${manifest.version}.zip\n`);
-console.log(`${zip}\nPayload SHA256 ${digest}`);
+for (const browser of ["chromium", "firefox"]) {
+  const folder = resolve(dist, browser);
+  const manifest = JSON.parse(await readFile(resolve(folder, "manifest.json"), "utf8"));
+  const zip = resolve(release, `thatmyassets-extension-${browser}-${manifest.version}.zip`);
+  const files = (await readdir(folder)).sort();
+  const payload = createHash("sha256");
+  for (const file of files) payload.update(file).update(await readFile(resolve(folder, file)));
+  const digest = payload.digest("hex");
+  execFileSync("tar", ["-a", "-cf", zip, "-C", folder, ...files], { stdio: "inherit" });
+  await writeFile(resolve(release, `thatmyassets-extension-${browser}-${manifest.version}.sha256`), `${digest}  ${zip.split(/[\\/]/).at(-1)}\n`);
+  console.log(`${zip}\nPayload SHA256 ${digest}`);
+}

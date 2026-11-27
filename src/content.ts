@@ -186,7 +186,7 @@ async function inspectBatch(items: Array<Pick<InspectRequest, "prompt" | "file">
   if (!current) return { proceed: false, message: "Provider route changed during inspection." };
   const requests: InspectRequest[] = items.map((item) => ({
     type: "inspect", request_id: crypto.randomUUID(), provider: current.id, channel: "browser",
-    application: /Edg\//.test(navigator.userAgent) ? "Edge" : "Chrome", ...item
+    application: /Firefox\//.test(navigator.userAgent) ? "Firefox" : /Edg\//.test(navigator.userAgent) ? "Edge" : "Chrome", ...item
   }));
   let response: unknown;
   try { response = await chrome.runtime.sendMessage({ type: "tma:inspect", requests }); }

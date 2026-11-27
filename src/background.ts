@@ -58,7 +58,7 @@ async function inspectAndConfirm(requests: InspectRequest[]): Promise<Inspection
 
 function validInspectRequest(request: InspectRequest): boolean {
   if (!isRecord(request) || request.type !== "inspect" || typeof request.request_id !== "string" || request.channel !== "browser") return false;
-  if (request.application !== "Chrome" && request.application !== "Edge") return false;
+  if (request.application !== "Chrome" && request.application !== "Edge" && request.application !== "Firefox") return false;
   if (!["chatgpt", "claude", "gemini", "copilot", "perplexity", "grok"].includes(request.provider)) return false;
   const hasFile = isRecord(request.file) && typeof request.file.name === "string" && typeof request.file.content_base64 === "string";
   const hasPrompt = isRecord(request.prompt) && typeof request.prompt.text === "string";

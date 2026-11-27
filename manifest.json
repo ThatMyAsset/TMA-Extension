@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "ThatMyAssets Browser DLP",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Inspects prompts and UTF-8 text files on supported AI web routes with a native endpoint agent.",
   "minimum_chrome_version": "119",
   "permissions": ["nativeMessaging", "storage", "alarms", "tabs"],

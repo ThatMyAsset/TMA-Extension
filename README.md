@@ -1,11 +1,11 @@
 # ThatMyAssets Browser DLP
 
-Manifest V3 extension for managed Chrome and Edge browsers. It holds supported AI prompt submissions and UTF-8 text-file events, sends content only to the local endpoint agent over Native Messaging, and releases an action only after policy and enforcement acknowledgement succeed.
+Manifest V3 extension for managed Chromium-family browsers and Firefox. It holds supported AI prompt submissions and UTF-8 text-file events, sends content only to the local endpoint agent over Native Messaging, and releases an action only after policy and enforcement acknowledgement succeed.
 
 ## Requirements
 
 - Node.js 22 or newer
-- Chrome 119+ or Edge 119+
+- Chrome/Edge 119+ or Firefox 128+
 - TMA-AgentWork endpoint service and native messaging host `com.thatmyassets.dlp`
 
 ## Install and build
@@ -17,9 +17,9 @@ npm test
 npm run package
 ```
 
-Load `dist/` through `chrome://extensions` or `edge://extensions` with Developer mode enabled, or deploy `dist/` using enterprise extension policy. The ZIP is written to `release/`.
+Build outputs are written separately to `dist/chromium/` and `dist/firefox/`. Load the Chromium folder through `chrome://extensions` or `edge://extensions`; load the Firefox folder at `about:debugging#/runtime/this-firefox` with **Load Temporary Add-on**. `npm run package` writes a ZIP and SHA-256 file for each browser in `release/`.
 
-Register the native host for the installed extension ID in both browsers as described by TMA-AgentWork. The host manifest must contain the extension ID in `allowed_origins`, for example `chrome-extension://<installed-extension-id>/`. Native host registration is incomplete until the popup reports an agent version and a recent health check.
+Register the Chromium extension ID and Firefox Add-on ID in TMA-AgentWork. The native host uses `allowed_origins` for Chromium and `allowed_extensions` for Firefox. The Firefox Add-on ID is `thatmyassets-dlp@thatmyassets.com`. Native host registration is incomplete until the popup reports an agent version and a recent health check.
 
 ## Verification
 

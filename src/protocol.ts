@@ -31,7 +31,7 @@ export type InspectRequest = {
   request_id: string;
   provider: ProviderId;
   channel: "browser";
-  application: "Chrome" | "Edge";
+  application: "Chrome" | "Edge" | "Firefox";
   file: { name: string; content_base64: string } | null;
   prompt: { text: string } | null;
 };
