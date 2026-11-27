@@ -37,6 +37,11 @@ export function popupView({ health, adapter, coverageAvailable, editors, checkin
     agentStatus,
     agentVersion: health.agentVersion || "Not connected",
     policyVersion: health.policyVersion || "No policy reported",
+    controlPlane: health.controlPlaneState?.replaceAll("_", " ") ?? "Unknown",
+    deviceId: health.deviceId ?? "Not enrolled",
+    lastHeartbeat: health.lastHeartbeat && Number.isFinite(Date.parse(health.lastHeartbeat)) ? new Date(health.lastHeartbeat).toLocaleString() : "Never",
+    lastPolicySync: health.lastPolicySync && Number.isFinite(Date.parse(health.lastPolicySync)) ? new Date(health.lastPolicySync).toLocaleString() : "Never",
+    syncError: health.lastSyncError ?? "",
     checkedAt: health.checkedAt && Number.isFinite(Date.parse(health.checkedAt)) ? new Date(health.checkedAt).toLocaleString() : "Never",
     providerUrl: adapter ? `https://${adapter.hosts[0]}/` : null,
     canInspect: state === "protected" && adapter !== null && coverageAvailable && editors > 0

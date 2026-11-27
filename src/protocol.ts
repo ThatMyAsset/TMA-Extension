@@ -4,6 +4,7 @@ export type Decision = "block" | "audit" | "allow";
 export type EnforcementStatus = "pending" | "confirmed" | "prevented" | "failed" | "not_required";
 export type InspectionStatus = "complete" | "incomplete" | "failed" | "unsupported" | "timeout";
 export type AgentStatus = "protected" | "limited" | "degraded" | "pending_enrollment";
+export type ControlPlaneState = "not_configured" | "connected" | "unreachable" | "enrollment_failed";
 export type Finding = { category: string; severity: "low" | "medium" | "high" | "critical"; detector: string };
 
 export type HealthResponse = {
@@ -12,6 +13,15 @@ export type HealthResponse = {
   status: AgentStatus;
   agent_version: string;
   policy_version: string;
+  connection: {
+    enrolled: boolean;
+    device_id: string | null;
+    control_plane_configured: boolean;
+    control_plane_state: ControlPlaneState;
+    last_heartbeat: string | null;
+    last_policy_sync: string | null;
+    last_sync_error?: string | null;
+  };
 };
 
 export type InspectionResponse = {
@@ -53,18 +63,29 @@ export type ProviderHealth = {
   policyVersion: string;
   checkedAt: string;
   detail: string;
+  controlPlaneState?: ControlPlaneState;
+  deviceId?: string | null;
+  lastHeartbeat?: string | null;
+  lastPolicySync?: string | null;
+  lastSyncError?: string | null;
 };
 
 export const UNAVAILABLE: ProviderHealth = {
   state: "unavailable", agentStatus: null, agentVersion: "", policyVersion: "", checkedAt: "",
-  detail: "Native agent not connected. Supported routes block prompts and file uploads."
+  detail: "Native agent not connected. Supported routes block prompts and file uploads.",
+  controlPlaneState: "unreachable", deviceId: null, lastHeartbeat: null, lastPolicySync: null, lastSyncError: null
 };
 
 export function isHealth(value: unknown, requestId: string): value is HealthResponse {
   if (!isRecord(value)) return false;
   return value.type === "health" && value.request_id === requestId &&
     ["protected", "limited", "degraded", "pending_enrollment"].includes(String(value.status)) &&
-    typeof value.agent_version === "string" && typeof value.policy_version === "string";
+    typeof value.agent_version === "string" && typeof value.policy_version === "string" && isRecord(value.connection) &&
+    typeof value.connection.enrolled === "boolean" && (typeof value.connection.device_id === "string" || value.connection.device_id === null) &&
+    typeof value.connection.control_plane_configured === "boolean" && ["not_configured", "connected", "unreachable", "enrollment_failed"].includes(String(value.connection.control_plane_state)) &&
+    (typeof value.connection.last_heartbeat === "string" || value.connection.last_heartbeat === null) &&
+    (typeof value.connection.last_policy_sync === "string" || value.connection.last_policy_sync === null) &&
+    (value.connection.last_sync_error === undefined || typeof value.connection.last_sync_error === "string" || value.connection.last_sync_error === null);
 }
 
 export function isInspection(value: unknown, requestId: string): value is InspectionResponse {
@@ -87,7 +108,9 @@ export function isProviderHealth(value: unknown): value is ProviderHealth {
   return isRecord(value) && ["protected", "limited", "unavailable"].includes(String(value.state)) &&
     (value.agentStatus === null || ["protected", "limited", "degraded", "pending_enrollment"].includes(String(value.agentStatus))) &&
     typeof value.agentVersion === "string" && typeof value.policyVersion === "string" &&
-    typeof value.checkedAt === "string" && typeof value.detail === "string";
+    typeof value.checkedAt === "string" && typeof value.detail === "string" &&
+    (value.controlPlaneState === undefined || ["not_configured", "connected", "unreachable", "enrollment_failed"].includes(String(value.controlPlaneState))) &&
+    (value.deviceId === undefined || typeof value.deviceId === "string" || value.deviceId === null);
 }
 
 export function isRecord(value: unknown): value is Record<string, unknown> {

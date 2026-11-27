@@ -43,7 +43,16 @@ export class NativeAgent {
           agentVersion: response.agent_version,
           policyVersion: response.policy_version,
           checkedAt: new Date().toISOString(),
-          detail: response.status === "protected" ? "Native agent connected and inspection ready." : `Native agent reports ${response.status}; enforcement remains fail-closed.`
+          detail: response.connection.last_sync_error
+            ? `Control Plane sync failed: ${response.connection.last_sync_error}`
+            : response.connection.control_plane_state !== "connected"
+              ? `Control Plane is ${response.connection.control_plane_state.replaceAll("_", " ")}; this endpoint may not appear on the Dashboard.`
+              : response.status === "protected" ? "Native agent and Control Plane are connected; inspection is ready." : `Native agent reports ${response.status}; enforcement remains fail-closed.`,
+          controlPlaneState: response.connection.control_plane_state,
+          deviceId: response.connection.device_id,
+          lastHeartbeat: response.connection.last_heartbeat,
+          lastPolicySync: response.connection.last_policy_sync,
+          lastSyncError: response.connection.last_sync_error ?? null
         });
       } catch (error) {
         return this.saveHealth({ ...UNAVAILABLE, checkedAt: new Date().toISOString(), detail: errorMessage(error) });

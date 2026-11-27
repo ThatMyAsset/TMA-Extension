@@ -82,6 +82,13 @@ function render(health: ProviderHealth, adapter: ProviderAdapter | null, coverag
   text("#agent-status", checking ? "Checking" : view.agentStatus);
   text("#version", view.agentVersion);
   text("#policy", view.policyVersion);
+  text("#control-plane", view.controlPlane);
+  text("#device-id", view.deviceId);
+  text("#heartbeat", view.lastHeartbeat);
+  text("#policy-sync", view.lastPolicySync);
+  const syncError = document.querySelector<HTMLElement>("#sync-error")!;
+  syncError.textContent = view.syncError;
+  syncError.hidden = !view.syncError;
   text("#checked", view.checkedAt);
   document.querySelector("#status-card")!.setAttribute("data-state", view.state);
   providerLink.hidden = view.providerUrl === null;
